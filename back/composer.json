@@ -1,0 +1,16 @@
+{
+  "autoload": {
+      "psr-4": {
+          "App\\": "App/",
+          "Database\\": "Database/",
+          "Models\\": "App/Models/",
+          "Core\\": "Core/",
+          "Public\\":"Public/",
+          "Controllers\\": "App/Controllers"
+      }
+  },
+  "require": {
+    "vlucas/phpdotenv": "^5.4",
+    "nogakazaha/mailer": "^1.3"
+  }
+}
