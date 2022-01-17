@@ -26,7 +26,11 @@ class UserController extends User
     switch ($this->requestMethod) {
       case 'GET':
         if ($this->userId) {
-          $response = $this->getUser($this->userId);
+          if ($this->userId == 'email') {
+            $response = $this->getUserByEmail();
+          } else {
+            $response = $this->getUser((int)$this->userId);
+          }
         } else {
           $response = $this->getAllUsers();
         };
@@ -53,6 +57,15 @@ class UserController extends User
   private function getAllUsers()
   {
     $result = $this->user::getAll();
+    $response['status_code_header'] = 'HTTP/1.1 200 OK';
+    $response['body'] = json_encode($result);
+    return $response;
+  }
+
+  private function getUserByEmail()
+  {
+    $input = (array) json_decode(file_get_contents('php://input'), TRUE);
+    $result = $this->user::findByEmail('email', $input['email'], 'password',  hash('md5', $input['password']));
     $response['status_code_header'] = 'HTTP/1.1 200 OK';
     $response['body'] = json_encode($result);
     return $response;

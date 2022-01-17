@@ -40,9 +40,9 @@ class User extends \Core\Model
   {
     return static::getDB()->query("SELECT * FROM users WHERE id=$id")->fetchAll(\PDO::FETCH_ASSOC);
   }
-  public static function findByEmail(string $dataMail, string $email, string $dataPass, string $pass): User | array
+  public static function findByEmail(string $dataMail, string $email, string $dataPass, string $pass)
   {
-    return static::getDB()->query("SELECT * FROM users WHERE $dataMail='$email' AND $dataPass='$pass'")->fetchAll(\PDO::FETCH_CLASS, __CLASS__);
+    return static::getDB()->query("SELECT * FROM users WHERE $dataMail='$email' AND $dataPass='$pass'")->fetchAll(\PDO::FETCH_ASSOC);
   }
   public static function update(array $data, int $id)
   {
