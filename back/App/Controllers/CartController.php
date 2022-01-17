@@ -9,14 +9,15 @@ class CartController extends CartModel
 
   private $db;
   private $requestMethod;
-  private $cartId;
+  private $cartData;
   private $cart;
 
-  public function __construct($db, $requestMethod, $cartId)
+  public function __construct($db, $requestMethod, $cartData, $userId)
   {
     $this->db = $db;
     $this->requestMethod = $requestMethod;
-    $this->cartId = $cartId;
+    $this->cartData = $cartData;
+    $this->userId = $userId;
 
     $this->cart = new CartModel($db);
   }
@@ -25,8 +26,12 @@ class CartController extends CartModel
   {
     switch ($this->requestMethod) {
       case 'GET':
-        if ($this->cartId) {
-          $response = $this->getCart($this->cartId);
+        if ($this->cartData) {
+          if ($this->cartData == 'user') {
+            $response = $this->getCartByUserId((int)$this->userId);
+          } else {
+            $response = $this->getCart((int)$this->cartData);
+          }
         } else {
           $response = $this->getAllCarts();
         };
@@ -35,10 +40,10 @@ class CartController extends CartModel
         $response = $this->createCartFromRequest();
         break;
       case 'PUT':
-        $response = $this->updateCartFromRequest($this->cartId);
+        $response = $this->updateCartFromRequest((int)$this->cartData);
         break;
       case 'DELETE':
-        $response = $this->deleteCart($this->cartId);
+        $response = $this->deleteCart((int)$this->cartData);
         break;
       default:
         $response = $this->notFoundResponse();
@@ -64,6 +69,14 @@ class CartController extends CartModel
     if (!$result) {
       return $this->notFoundResponse();
     }
+    $response['status_code_header'] = 'HTTP/1.1 200 OK';
+    $response['body'] = json_encode($result);
+    return $response;
+  }
+
+  private function getCartByUserId($id)
+  {
+    $result = $this->cart::findByUserId($id);
     $response['status_code_header'] = 'HTTP/1.1 200 OK';
     $response['body'] = json_encode($result);
     return $response;

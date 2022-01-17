@@ -33,12 +33,16 @@ switch ($uri[1]) {
     $controller->processRequest();
     break;
   case 'cart':
-    $cartId = null;
+    $cartData = null;
+    $userId = null;
     if (isset($uri[2])) {
-      $cartId = (int) $uri[2];
+      $cartData = $uri[2];
+    }
+    if (isset($uri[3])) {
+      $userId = $uri[3];
     }
     $requestMethod = $_SERVER["REQUEST_METHOD"];
-    $controller = new CartController(DbConnection::getDB(), $requestMethod, $cartId);
+    $controller = new CartController(DbConnection::getDB(), $requestMethod, $cartData, $userId);
     $controller->processRequest();
     break;
   default:

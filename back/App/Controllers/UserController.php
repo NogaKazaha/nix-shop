@@ -9,14 +9,14 @@ class UserController extends User
 
   private $db;
   private $requestMethod;
-  private $userId;
+  private $userData;
   private $user;
 
-  public function __construct($db, $requestMethod, $userId)
+  public function __construct($db, $requestMethod, $userData)
   {
     $this->db = $db;
     $this->requestMethod = $requestMethod;
-    $this->userId = $userId;
+    $this->userData = $userData;
 
     $this->user = new User($db);
   }
@@ -25,11 +25,11 @@ class UserController extends User
   {
     switch ($this->requestMethod) {
       case 'GET':
-        if ($this->userId) {
-          if ($this->userId == 'email') {
+        if ($this->userData) {
+          if ($this->userData == 'email') {
             $response = $this->getUserByEmail();
           } else {
-            $response = $this->getUser((int)$this->userId);
+            $response = $this->getUser((int)$this->userData);
           }
         } else {
           $response = $this->getAllUsers();
@@ -39,10 +39,10 @@ class UserController extends User
         $response = $this->createUserFromRequest();
         break;
       case 'PUT':
-        $response = $this->updateUserFromRequest($this->userId);
+        $response = $this->updateUserFromRequest((int)$this->userData);
         break;
       case 'DELETE':
-        $response = $this->deleteUser($this->userId);
+        $response = $this->deleteUser((int)$this->userData);
         break;
       default:
         $response = $this->notFoundResponse();
