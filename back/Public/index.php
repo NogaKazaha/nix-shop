@@ -15,12 +15,12 @@ $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = explode('/', $uri);
 switch ($uri[1]) {
   case 'user':
-    $userId = null;
+    $user = null;
     if (isset($uri[2])) {
-      $userId = (int) $uri[2];
+      $user = $uri[2];
     }
     $requestMethod = $_SERVER["REQUEST_METHOD"];
-    $controller = new UserController(DbConnection::getDB(), $requestMethod, $userId);
+    $controller = new UserController(DbConnection::getDB(), $requestMethod, $user);
     $controller->processRequest();
     break;
   case 'products':
