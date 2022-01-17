@@ -2,43 +2,43 @@
 
 namespace Controllers;
 
-use Models\User;
+use Models\ProductsModel;
 
-class UserController extends User
+class ProductsController extends ProductsModel
 {
 
   private $db;
   private $requestMethod;
-  private $userId;
-  private $user;
+  private $productId;
+  private $product;
 
-  public function __construct($db, $requestMethod, $userId)
+  public function __construct($db, $requestMethod, $productId)
   {
     $this->db = $db;
     $this->requestMethod = $requestMethod;
-    $this->userId = $userId;
+    $this->productId = $productId;
 
-    $this->user = new User($db);
+    $this->product = new ProductsModel($db);
   }
 
   public function processRequest()
   {
     switch ($this->requestMethod) {
       case 'GET':
-        if ($this->userId) {
-          $response = $this->getUser($this->userId);
+        if ($this->productId) {
+          $response = $this->getProduct($this->productId);
         } else {
-          $response = $this->getAllUsers();
+          $response = $this->getAllProducts();
         };
         break;
       case 'POST':
-        $response = $this->createUserFromRequest();
+        $response = $this->createProductFromRequest();
         break;
       case 'PUT':
-        $response = $this->updateUserFromRequest($this->userId);
+        $response = $this->updateProductFromRequest($this->productId);
         break;
       case 'DELETE':
-        $response = $this->deleteUser($this->userId);
+        $response = $this->deleteProduct($this->productId);
         break;
       default:
         $response = $this->notFoundResponse();
@@ -50,17 +50,17 @@ class UserController extends User
     }
   }
 
-  private function getAllUsers()
+  private function getAllProducts()
   {
-    $result = $this->user::getAll();
+    $result = $this->product::getAll();
     $response['status_code_header'] = 'HTTP/1.1 200 OK';
     $response['body'] = json_encode($result);
     return $response;
   }
 
-  private function getUser($id)
+  private function getProduct($id)
   {
-    $result = $this->user::find($id);
+    $result = $this->product::find($id);
     if (!$result) {
       return $this->notFoundResponse();
     }
@@ -69,52 +69,41 @@ class UserController extends User
     return $response;
   }
 
-  private function createUserFromRequest()
+  private function createProductFromRequest()
   {
     $input = (array) json_decode(file_get_contents('php://input'), TRUE);
-    $this->user::create($input);
+    $this->product::create($input);
     $response['status_code_header'] = 'HTTP/1.1 201 Created';
     $arr = array('message' => "User created");
     $response['body'] = json_encode($arr);
     return $response;
   }
 
-  private function updateUserFromRequest($id)
+  private function updateProductFromRequest($id)
   {
-    $result = $this->user->find($id);
+    $result = $this->product->find($id);
     if (!$result) {
       return $this->notFoundResponse();
     }
     $input = (array) json_decode(file_get_contents('php://input'), TRUE);
-    $this->user::update($input, $id);
+    $this->product::update($input, $id);
     $response['status_code_header'] = 'HTTP/1.1 200 OK';
     $arr = array('message' => "User updated");
     $response['body'] = json_encode($arr);
     return $response;
   }
 
-  private function deleteUser($id)
+  private function deleteProduct($id)
   {
-    $result = $this->user->find($id);
+    $result = $this->product->find($id);
     if (!$result) {
       return $this->notFoundResponse();
     }
-    $this->user::destroy($id);
+    $this->product::destroy($id);
     $response['status_code_header'] = 'HTTP/1.1 200 OK';
     $arr = array('message' => "User deleted");
     $response['body'] = json_encode($arr);
     return $response;
-  }
-
-  private function validatePerson($input)
-  {
-    if (!isset($input['username'])) {
-      return false;
-    }
-    if (!isset($input['email'])) {
-      return false;
-    }
-    return true;
   }
 
   private function notFoundResponse()

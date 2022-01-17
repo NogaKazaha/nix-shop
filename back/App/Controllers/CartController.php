@@ -2,43 +2,43 @@
 
 namespace Controllers;
 
-use Models\User;
+use Models\CartModel;
 
-class UserController extends User
+class CartController extends CartModel
 {
 
   private $db;
   private $requestMethod;
-  private $userId;
-  private $user;
+  private $cartId;
+  private $cart;
 
-  public function __construct($db, $requestMethod, $userId)
+  public function __construct($db, $requestMethod, $cartId)
   {
     $this->db = $db;
     $this->requestMethod = $requestMethod;
-    $this->userId = $userId;
+    $this->cartId = $cartId;
 
-    $this->user = new User($db);
+    $this->cart = new CartModel($db);
   }
 
   public function processRequest()
   {
     switch ($this->requestMethod) {
       case 'GET':
-        if ($this->userId) {
-          $response = $this->getUser($this->userId);
+        if ($this->cartId) {
+          $response = $this->getCart($this->cartId);
         } else {
-          $response = $this->getAllUsers();
+          $response = $this->getAllCarts();
         };
         break;
       case 'POST':
-        $response = $this->createUserFromRequest();
+        $response = $this->createCartFromRequest();
         break;
       case 'PUT':
-        $response = $this->updateUserFromRequest($this->userId);
+        $response = $this->updateCartFromRequest($this->cartId);
         break;
       case 'DELETE':
-        $response = $this->deleteUser($this->userId);
+        $response = $this->deleteCart($this->cartId);
         break;
       default:
         $response = $this->notFoundResponse();
@@ -50,17 +50,17 @@ class UserController extends User
     }
   }
 
-  private function getAllUsers()
+  private function getAllCarts()
   {
-    $result = $this->user::getAll();
+    $result = $this->cart::getAll();
     $response['status_code_header'] = 'HTTP/1.1 200 OK';
     $response['body'] = json_encode($result);
     return $response;
   }
 
-  private function getUser($id)
+  private function getCart($id)
   {
-    $result = $this->user::find($id);
+    $result = $this->cart::find($id);
     if (!$result) {
       return $this->notFoundResponse();
     }
@@ -69,52 +69,41 @@ class UserController extends User
     return $response;
   }
 
-  private function createUserFromRequest()
+  private function createCartFromRequest()
   {
     $input = (array) json_decode(file_get_contents('php://input'), TRUE);
-    $this->user::create($input);
+    $this->cart::create($input);
     $response['status_code_header'] = 'HTTP/1.1 201 Created';
     $arr = array('message' => "User created");
     $response['body'] = json_encode($arr);
     return $response;
   }
 
-  private function updateUserFromRequest($id)
+  private function updateCartFromRequest($id)
   {
-    $result = $this->user->find($id);
+    $result = $this->cart->find($id);
     if (!$result) {
       return $this->notFoundResponse();
     }
     $input = (array) json_decode(file_get_contents('php://input'), TRUE);
-    $this->user::update($input, $id);
+    $this->cart::update($input, $id);
     $response['status_code_header'] = 'HTTP/1.1 200 OK';
     $arr = array('message' => "User updated");
     $response['body'] = json_encode($arr);
     return $response;
   }
 
-  private function deleteUser($id)
+  private function deleteCart($id)
   {
-    $result = $this->user->find($id);
+    $result = $this->cart->find($id);
     if (!$result) {
       return $this->notFoundResponse();
     }
-    $this->user::destroy($id);
+    $this->cart::destroy($id);
     $response['status_code_header'] = 'HTTP/1.1 200 OK';
     $arr = array('message' => "User deleted");
     $response['body'] = json_encode($arr);
     return $response;
-  }
-
-  private function validatePerson($input)
-  {
-    if (!isset($input['username'])) {
-      return false;
-    }
-    if (!isset($input['email'])) {
-      return false;
-    }
-    return true;
   }
 
   private function notFoundResponse()
