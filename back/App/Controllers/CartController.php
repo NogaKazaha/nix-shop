@@ -87,7 +87,7 @@ class CartController extends CartModel
     $input = (array) json_decode(file_get_contents('php://input'), TRUE);
     $this->cart::create($input);
     $response['status_code_header'] = 'HTTP/1.1 201 Created';
-    $arr = array('message' => "User created");
+    $arr = array('message' => "Cart created");
     $response['body'] = json_encode($arr);
     return $response;
   }
@@ -101,7 +101,7 @@ class CartController extends CartModel
     $input = (array) json_decode(file_get_contents('php://input'), TRUE);
     $this->cart::update($input, $id);
     $response['status_code_header'] = 'HTTP/1.1 200 OK';
-    $arr = array('message' => "User updated");
+    $arr = array('message' => "Cart updated");
     $response['body'] = json_encode($arr);
     return $response;
   }
@@ -114,7 +114,7 @@ class CartController extends CartModel
     }
     $this->cart::destroy($id);
     $response['status_code_header'] = 'HTTP/1.1 200 OK';
-    $arr = array('message' => "User deleted");
+    $arr = array('message' => "Cart deleted");
     $response['body'] = json_encode($arr);
     return $response;
   }
