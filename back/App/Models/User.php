@@ -29,7 +29,7 @@ class User extends \Core\Model
       $statement->execute([
         ':username' => $data['username'],
         ':email' => $data['email'],
-        ':password' => $data['password']
+        ':password' => hash('md5', $data['password'])
       ]);
     } catch (\PDOException $e) {
       echo "Creation failed: " . $e->getMessage();

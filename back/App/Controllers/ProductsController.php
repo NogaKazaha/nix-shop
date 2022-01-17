@@ -74,7 +74,7 @@ class ProductsController extends ProductsModel
     $input = (array) json_decode(file_get_contents('php://input'), TRUE);
     $this->product::create($input);
     $response['status_code_header'] = 'HTTP/1.1 201 Created';
-    $arr = array('message' => "User created");
+    $arr = array('message' => "Product created");
     $response['body'] = json_encode($arr);
     return $response;
   }
@@ -88,7 +88,7 @@ class ProductsController extends ProductsModel
     $input = (array) json_decode(file_get_contents('php://input'), TRUE);
     $this->product::update($input, $id);
     $response['status_code_header'] = 'HTTP/1.1 200 OK';
-    $arr = array('message' => "User updated");
+    $arr = array('message' => "Product updated");
     $response['body'] = json_encode($arr);
     return $response;
   }
@@ -101,7 +101,7 @@ class ProductsController extends ProductsModel
     }
     $this->product::destroy($id);
     $response['status_code_header'] = 'HTTP/1.1 200 OK';
-    $arr = array('message' => "User deleted");
+    $arr = array('message' => "Product deleted");
     $response['body'] = json_encode($arr);
     return $response;
   }
