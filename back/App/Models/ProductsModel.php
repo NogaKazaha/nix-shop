@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Models;
 
 class ProductsModel extends \Core\Model
 {
@@ -12,11 +12,16 @@ class ProductsModel extends \Core\Model
   public float $amount;
   public string $created_at;
   public string $updated_at;
+  private $db = null;
+  public function __construct($db)
+  {
+    $this->db = $db;
+  }
   public static function getAll(): array
   {
-    return static::getDB()->query("SELECT * FROM products")->fetchAll(\PDO::FETCH_CLASS, __CLASS__);
+    return static::getDB()->query("SELECT * FROM products")->fetchAll(\PDO::FETCH_ASSOC);
   }
-  public static function create(array $data): ProductsModel
+  public static function create(array $data)
   {
     $database = static::getDB();
     $statement = $database->prepare("INSERT INTO products (name, price, status, amount, photo, created_at, updated_at) VALUES (:name, :price, :status, :amount, :photo, now(), now())");
@@ -31,13 +36,13 @@ class ProductsModel extends \Core\Model
     } catch (\PDOException $e) {
       echo "Creation failed: " . $e->getMessage();
     }
-    return $database->query("SELECT * FROM products WHERE name='" . $data['name'] . "'")->fetchObject(__CLASS__);
+    return $database->query("SELECT * FROM products WHERE name='" . $data['name'] . "'")->fetchAll(\PDO::FETCH_ASSOC);
   }
-  public static function find(int $id): ProductsModel
+  public static function find(int $id)
   {
-    return static::getDB()->query("SELECT * FROM products WHERE id=$id")->fetchObject(__CLASS__) ?: new ProductsModel;
+    return static::getDB()->query("SELECT * FROM products WHERE id=$id")->fetchAll(\PDO::FETCH_ASSOC);
   }
-  public static function update(array $data, int $id): ProductsModel
+  public static function update(array $data, int $id)
   {
     $database = static::getDB();
     $statement = $database->prepare("UPDATE products SET name=:name, price=:price, status=:status, amount=:amount photo=:photo, updated_at=now() WHERE id=$id");
@@ -52,7 +57,7 @@ class ProductsModel extends \Core\Model
     } catch (\PDOException $e) {
       echo "Updating failed: " . $e->getMessage();
     }
-    return $database->query("SELECT * FROM products WHERE id=$id")->fetchObject(__CLASS__);
+    return $database->query("SELECT * FROM products WHERE id=$id")->fetchAll(\PDO::FETCH_ASSOC);
   }
   public static function destroy(int $id): bool
   {

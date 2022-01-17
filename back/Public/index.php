@@ -2,6 +2,8 @@
 require __DIR__ . "/../App/bootstrap/bootstrap.php";
 
 use Controllers\UserController;
+use Controllers\ProductsController;
+use Controllers\CartController;
 use Database\DbConnection;
 
 header("Access-Control-Allow-Origin: *");
@@ -19,6 +21,24 @@ switch ($uri[1]) {
     }
     $requestMethod = $_SERVER["REQUEST_METHOD"];
     $controller = new UserController(DbConnection::getDB(), $requestMethod, $userId);
+    $controller->processRequest();
+    break;
+  case 'products':
+    $productId = null;
+    if (isset($uri[2])) {
+      $productId = (int) $uri[2];
+    }
+    $requestMethod = $_SERVER["REQUEST_METHOD"];
+    $controller = new ProductsController(DbConnection::getDB(), $requestMethod, $productId);
+    $controller->processRequest();
+    break;
+  case 'cart':
+    $cartId = null;
+    if (isset($uri[2])) {
+      $cartId = (int) $uri[2];
+    }
+    $requestMethod = $_SERVER["REQUEST_METHOD"];
+    $controller = new CartController(DbConnection::getDB(), $requestMethod, $cartId);
     $controller->processRequest();
     break;
   default:
