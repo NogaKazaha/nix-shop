@@ -23,17 +23,21 @@ class CartModel extends \Core\Model
   public static function create(array $data)
   {
     $database = static::getDB();
-    $statement = $database->prepare("INSERT INTO products_order (user_id, product_id, amount, created_at, updated_at) VALUES (:user_id, :product_id, :amount, now(), now())");
-    try {
-      $statement->execute([
-        ':user_id' => $data['user_id'],
-        ':product_id' => $data['product_id'],
-        ':amount' => $data['amount'],
-      ]);
-    } catch (\PDOException $e) {
-      echo "Creation failed: " . $e->getMessage();
+    $check = $database->query("SELECT * FROM products_order WHERE user_id='" . $data['user_id'] . "' AND product_id='" . $data['product_id'] . "'")->fetchAll(\PDO::FETCH_ASSOC);
+    if ($check != []) {
+    } else {
+      $statement = $database->prepare("INSERT INTO products_order (user_id, product_id, amount, created_at, updated_at) VALUES (:user_id, :product_id, :amount, now(), now())");
+      try {
+        $statement->execute([
+          ':user_id' => $data['user_id'],
+          ':product_id' => $data['product_id'],
+          ':amount' => $data['amount'],
+        ]);
+      } catch (\PDOException $e) {
+        echo "Creation failed: " . $e->getMessage();
+      }
+      return $database->query("SELECT * FROM products_order WHERE user_id='" . $data['user_id'] . "'")->fetchAll(\PDO::FETCH_ASSOC);
     }
-    return $database->query("SELECT * FROM products_order WHERE user_id='" . $data['user_id'] . "'")->fetchAll(\PDO::FETCH_ASSOC);
   }
   public static function find(int $id)
   {
@@ -41,7 +45,15 @@ class CartModel extends \Core\Model
   }
   public static function findByUserId(int $user_id)
   {
-    return static::getDB()->query("SELECT * FROM products_order WHERE user_id=$user_id")->fetchAll(\PDO::FETCH_ASSOC);
+    $new_arr = [];
+    $ids = static::getDB()->query("SELECT product_id, amount FROM products_order WHERE user_id=$user_id")->fetchAll(\PDO::FETCH_ASSOC);
+    foreach ($ids as $id) {
+      $product_id = $id['product_id'];
+      $new_elem = static::getDB()->query("SELECT * FROM products WHERE id=$product_id")->fetchAll(\PDO::FETCH_ASSOC);
+      $new_elem[0]['amount'] = $id['amount'];
+      array_push($new_arr, $new_elem[0]);
+    }
+    return $new_arr;
   }
   public static function update(array $data, int $id)
   {

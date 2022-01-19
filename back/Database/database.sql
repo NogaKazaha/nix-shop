@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS `products_order` (
   `updated_at` TIMESTAMP NULL DEFAULT now()
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARACTER SET utf8mb4 COLLATE 'utf8mb4_unicode_ci';
 
-INSERT INTO products(name,price,status,amount,photo) VALUES ("COSMO XR-120","3000000$","Out of stock",10,"assets/images/blue.jpg");
-INSERT INTO products(name,price,status,amount,photo) VALUES ("SPEEDER 9000","13000000$","Avalible",20,"assets/images/red.jpg");
-INSERT INTO products(name,price,status,amount,photo) VALUES ("KARKANI 20-X","7000000$","Out of stock",10,"assets/images/green.jpg");
-INSERT INTO products(name,price,status,amount,photo) VALUES ("LUNAR XR-PRO","5000000$","Out of stock",10,"assets/images/yellow.jpg");
+INSERT INTO products(name,price,status,amount,photo) VALUES ("COSMO XR-120","3000000$","Avalible",10,"/images/blue.jpg");
+INSERT INTO products(name,price,status,amount,photo) VALUES ("SPEEDER 9000","13000000$","Avalible",20,"/images/red.jpg");
+INSERT INTO products(name,price,status,amount,photo) VALUES ("KARKANI 20-X","7000000$","Avalible",10,"/images/green.jpg");
+INSERT INTO products(name,price,status,amount,photo) VALUES ("LUNAR XR-PRO","5000000$","Avalible",10,"/images/yellow.jpg");

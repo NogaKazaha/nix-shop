@@ -45,6 +45,9 @@ class CartController extends CartModel
       case 'DELETE':
         $response = $this->deleteCart((int)$this->cartData);
         break;
+      case 'OPTIONS':
+        $response = $this->createCartFromRequest();
+        break;
       default:
         $response = $this->notFoundResponse();
         break;
