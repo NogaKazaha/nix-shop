@@ -26,23 +26,30 @@ class UserController extends User
     switch ($this->requestMethod) {
       case 'GET':
         if ($this->userData) {
-          if ($this->userData == 'email') {
-            $response = $this->getUserByEmail();
-          } else {
-            $response = $this->getUser((int)$this->userData);
-          }
+          $response = $this->getUser((int)$this->userData);
         } else {
           $response = $this->getAllUsers();
         };
         break;
       case 'POST':
-        $response = $this->createUserFromRequest();
+        if ($this->userData == 'email') {
+          $response = $this->getUserByEmail();
+        } else {
+          $response = $this->createUserFromRequest();
+        }
         break;
       case 'PUT':
         $response = $this->updateUserFromRequest((int)$this->userData);
         break;
       case 'DELETE':
         $response = $this->deleteUser((int)$this->userData);
+        break;
+      case 'OPTIONS':
+        if ($this->userData == 'email') {
+          $response = $this->getUserByEmail();
+        } else {
+          $response = $this->createUserFromRequest();
+        }
         break;
       default:
         $response = $this->notFoundResponse();
